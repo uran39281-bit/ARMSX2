@@ -1,4 +1,13 @@
-# ARMSX2 — Native ARM64 JIT Fork of PCSX2
+# Black Ice 1.0.3 — powered by ARMSX2 and PCSX2
+
+Black Ice is the Android product experience maintained in the
+`black-ice-1.0.3` branch. It keeps ARMSX2 naming for native APIs, data
+compatibility, and upstream attribution while presenting the Black Ice name
+and interface to users.
+
+## Upstream engine
+
+The emulator core below is ARMSX2, a native ARM64 JIT fork of PCSX2.
 [![All Platforms](https://img.shields.io/github/actions/workflow/status/ARMSX2/ARMSX2/build-all.yml?branch=master&label=All%20Platforms)](https://github.com/ARMSX2/ARMSX2/actions/workflows/build-all.yml)
 
 ARMSX2 is a free and open-source PlayStation 2 (PS2) emulator based on PCSX2. Its purpose is to emulate the PS2's hardware, using a combination of MIPS CPU [Interpreters](<https://en.wikipedia.org/wiki/Interpreter_(computing)>), [Recompilers](https://en.wikipedia.org/wiki/Dynamic_recompilation) and a [Virtual Machine](https://en.wikipedia.org/wiki/Virtual_machine) which manages hardware states and PS2 system memory. This allows you to play PS2 games on your phone, PC, or gaming handheld, with many additional features and benefits.
