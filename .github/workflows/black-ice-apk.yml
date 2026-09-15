@@ -1,0 +1,45 @@
+name: Black Ice test APK
+on:
+  push:
+    branches: [black-ice-1.0.3]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: black-ice-apk-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: platforms/android
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android toolchain
+        run: sdkmanager "platforms;android-37" "build-tools;37.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
+      - name: Fetch shader compiler dependencies
+        run: python3 app/src/main/cpp/3rdparty/shaderc/utils/git-sync-deps
+      - name: Install Rust target
+        run: rustup target add aarch64-linux-android
+      - name: Create disposable test signing key
+        run: |
+          mkdir -p "$HOME/.android"
+          keytool -genkeypair -keystore "$HOME/.android/debug.keystore" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 365 -dname "CN=Black Ice Test"
+      - name: Build universal 4K and 16K test APK
+        run: bash tools/build-universal-page-apk.sh "$GITHUB_WORKSPACE/Black-Ice-1.0.3-test.apk"
+      - name: Upload installable test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Black-Ice-1.0.3-test
+          path: Black-Ice-1.0.3-test.apk
+          if-no-files-found: error
+          retention-days: 14
