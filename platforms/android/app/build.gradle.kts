@@ -100,8 +100,8 @@ android {
         applicationId = armsx2ApplicationId.get()
         minSdk = armsx2MinSdk.get().toInt()
         targetSdk = 37
-        versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 1088
-        versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "2.6.1"
+        versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 10003
+        versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
@@ -146,15 +146,10 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            // Sign release with the debug keystore so it's installable on-device
-            // without a separate signing config. NOT for distribution — the debug
-            // keystore is well-known and not secure for Play Store uploads.
-            // Replace with a real release signingConfig before publishing.
-            signingConfig = if (armsx2PlaySigningReady) {
-                signingConfigs.getByName("playRelease")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            // Never sign a distributable build with Android's public debug key. Without
+            // a private keystore Gradle emits an unsigned release; use a debug variant
+            // for local testing instead.
+            signingConfig = if (armsx2PlaySigningReady) signingConfigs.getByName("playRelease") else null
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

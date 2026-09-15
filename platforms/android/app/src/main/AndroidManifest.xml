@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <permission
+        android:name="${applicationId}.permission.CONFIGURE_RETROACHIEVEMENTS_PROXY"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="archos.permission.FULLSCREEN.FULL" />
@@ -121,6 +125,7 @@
 
         <receiver
             android:name=".RetroAchievementsHostOverrideReceiver"
+            android:permission="${applicationId}.permission.CONFIGURE_RETROACHIEVEMENTS_PROXY"
             android:exported="true">
             <intent-filter>
                 <action android:name="${applicationId}.action.SET_RETROACHIEVEMENTS_HOST_OVERRIDE" />

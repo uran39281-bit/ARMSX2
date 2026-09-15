@@ -35,7 +35,7 @@ import com.armsx2.ui.common.ArmsTopBar
 import com.armsx2.ui.common.GlassPanel
 import com.armsx2.ui.common.RoundAction
 
-private const val RepositoryUrl = "https://github.com/ARMSX2/ARMSX2"
+private const val RepositoryUrl = "https://github.com/uran39281-bit/ARMSX2"
 private const val Pcsx2RepositoryUrl = "https://github.com/PCSX2/pcsx2"
 
 @Composable
@@ -108,7 +108,7 @@ fun AboutScreen(onBack: () -> Unit, viewModel: AboutViewModel = viewModel()) {
                     if (compact) {
                         ProjectCard(
                             title = str("about.repository.title"),
-                            repository = "ARMSX2/ARMSX2",
+                            repository = "uran39281-bit/ARMSX2",
                             description = str("about.repository.description"),
                             glyph = "⌘",
                             onOpen = { uriHandler.openUri(RepositoryUrl) },
@@ -125,7 +125,7 @@ fun AboutScreen(onBack: () -> Unit, viewModel: AboutViewModel = viewModel()) {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             ProjectCard(
                                 title = str("about.repository.title"),
-                                repository = "ARMSX2/ARMSX2",
+                                repository = "uran39281-bit/ARMSX2",
                                 description = str("about.repository.description"),
                                 glyph = "⌘",
                                 modifier = Modifier.weight(1f),

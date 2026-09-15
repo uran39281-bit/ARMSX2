@@ -120,13 +120,13 @@ fun ArmsLogo(modifier: Modifier = Modifier, showWordmark: Boolean = true, iconSi
         // corners don't show — matches the round hero render.
         Image(
             painter = painterResource(id = R.drawable.savetowerforeground),
-            contentDescription = "ARMSX2",
+            contentDescription = "Black Ice",
             modifier = Modifier.size(iconSize).clip(CircleShape),
         )
         if (showWordmark) {
             Spacer(Modifier.width(12.dp))
             Text(
-                text = "ARMSX2",
+                text = "BLACK ICE",
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Black,

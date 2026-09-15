@@ -63,8 +63,8 @@ import java.util.TimeZone
  * user to a stable — comparison is by the numeric versionCode magnitude, not the version string.
  */
 
-private const val LATEST_URL = "https://api.github.com/repos/ARMSX2/ARMSX2/releases/latest"
-private const val RELEASES_URL = "https://api.github.com/repos/ARMSX2/ARMSX2/releases?per_page=20"
+private const val LATEST_URL = "https://api.github.com/repos/uran39281-bit/ARMSX2/releases/latest"
+private const val RELEASES_URL = "https://api.github.com/repos/uran39281-bit/ARMSX2/releases?per_page=20"
 private const val NIGHTLY_VC_THRESHOLD = 1_000_000  // stable VCs are ~1300; nightly = Unix seconds.
 
 private sealed interface UpdateState {

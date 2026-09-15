@@ -7,13 +7,17 @@ The Android app version is configured in `app/build.gradle.kts` under
 `android.defaultConfig`:
 
 ```kotlin
-versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 1088
-versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "2.5.8"
+versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 10003
+versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "1.0.3"
 ```
 
 Change `versionName` to the user-facing release version and increment the integer
 `versionCode` for every published APK or AAB. Release scripts can still override
 these defaults with `-Parmsx2.versionName=...` and `-Parmsx2.versionCode=...`.
+
+Release variants are deliberately unsigned unless `armsx2_keystore.properties`
+contains a private release key. Use a debug variant for local installation; never
+publish an APK signed with Android's shared debug certificate.
 
 ## Android APK builds
 
