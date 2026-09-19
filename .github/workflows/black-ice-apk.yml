@@ -1,8 +1,8 @@
-name: Black Ice test APK
+name: Black Ice 1.0.4 full integration APK
 
 on:
   push:
-    branches: [black-ice-1.0.3]
+    branches: [black-ice-1.0.4]
   workflow_dispatch:
 
 permissions:
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '17'
 
       - uses: android-actions/setup-android@v3
         with:
@@ -37,7 +37,13 @@ jobs:
           log-accepted-android-sdk-licenses: false
 
       - name: Install Android toolchain
-        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
+        run: sdkmanager "platforms;android-37" "build-tools;37.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
+
+      - name: Verify Black Ice integration
+        working-directory: .
+        run: |
+          node black-ice/tests/library-ui.cjs
+          python3 black-ice/tests/integration.py
 
       - name: Fetch shader compiler dependencies
         run: python3 app/src/main/cpp/3rdparty/shaderc/utils/git-sync-deps
@@ -54,22 +60,22 @@ jobs:
         run: python3 tools/apply-black-ice-sd662-tune.py
 
       - name: Build universal 4K and 16K test APK
-        run: bash tools/build-universal-page-apk.sh "$GITHUB_WORKSPACE/Black-Ice-1.0.3-test.apk"
+        run: bash tools/build-universal-page-apk.sh "$GITHUB_WORKSPACE/Black-Ice-1.0.4-test.apk"
 
       - name: Freeze and verify APK
         run: |
           ./gradlew --stop || true
-          cp "$GITHUB_WORKSPACE/Black-Ice-1.0.3-test.apk" "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
-          unzip -t "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
-          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
-          sha256sum "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
+          cp "$GITHUB_WORKSPACE/Black-Ice-1.0.4-test.apk" "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
+          unzip -t "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
+          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
+          "$ANDROID_HOME/build-tools/37.0.0/zipalign" -c -P 16 -v 4 "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
+          sha256sum "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
 
       - name: Upload verified installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: Black-Ice-1.0.3-verified
-          path: Black-Ice-1.0.3-install.apk
+          name: Black-Ice-1.0.4-verified
+          path: Black-Ice-1.0.4-install.apk
           compression-level: 0
           if-no-files-found: error
           retention-days: 14
