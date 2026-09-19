@@ -16,7 +16,7 @@ Application ID stays `dev.aether.preview` for launcher data compatibility. The h
 
 ## Build requirements and recipe
 
-Use JDK 17, Android SDK platform 37, NDK 28.2.13676358 and CMake 3.31.6. Gradle 9.4.1, AGP 9.2.1 and Kotlin 2.4.0 are pinned by the upstream source. A working network connection to Gradle/Maven/Android dependency repositories is required. Configure ANDROID_HOME or platforms/android/local.properties normally.
+Use JDK 21, Android SDK platform 37, NDK 28.2.13676358 and CMake 3.31.6. Gradle 9.4.1, AGP 9.2.1 and Kotlin 2.4.0 are pinned by the upstream source. A working network connection to Gradle/Maven/Android dependency repositories is required. Configure ANDROID_HOME or platforms/android/local.properties normally.
 
 From the reconstructed repository:
 
