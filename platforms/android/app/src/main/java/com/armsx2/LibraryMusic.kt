@@ -36,7 +36,7 @@ object LibraryMusic {
     private const val CustomNameKey = "ui.libraryMusic.customName"
     private const val DefaultVolumePercent = 15
 
-    val enabled = mutableStateOf(true)
+    val enabled = mutableStateOf(false)
 
     /** 0..100, backs the App-settings slider. Applied live to the running player. */
     val volumePercent = mutableStateOf(DefaultVolumePercent)
@@ -60,7 +60,7 @@ object LibraryMusic {
     private var pausedForFocus = false
 
     fun load() {
-        enabled.value = MainActivityRuntime.prefs.getBoolean(EnabledKey, true)
+        enabled.value = MainActivityRuntime.prefs.getBoolean(EnabledKey, false)
         volumePercent.value = MainActivityRuntime.prefs.getInt(VolumeKey, DefaultVolumePercent)
         customName.value = MainActivityRuntime.prefs.getString(CustomNameKey, null)
     }
