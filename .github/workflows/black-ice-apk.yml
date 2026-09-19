@@ -53,10 +53,20 @@ jobs:
       - name: Build universal 4K and 16K test APK
         run: bash tools/build-universal-page-apk.sh "$GITHUB_WORKSPACE/Black-Ice-1.0.3-test.apk"
 
-      - name: Upload installable test APK
+      - name: Freeze and verify APK
+        run: |
+          ./gradlew --stop || true
+          cp "$GITHUB_WORKSPACE/Black-Ice-1.0.3-test.apk" "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
+          unzip -t "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
+          sha256sum "$GITHUB_WORKSPACE/Black-Ice-1.0.3-install.apk"
+
+      - name: Upload verified installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: Black-Ice-1.0.3-test
-          path: Black-Ice-1.0.3-test.apk
+          name: Black-Ice-1.0.3-verified
+          path: Black-Ice-1.0.3-install.apk
+          compression-level: 0
           if-no-files-found: error
           retention-days: 14
