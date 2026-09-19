@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - uses: android-actions/setup-android@v3
         with:
@@ -37,7 +37,7 @@ jobs:
           log-accepted-android-sdk-licenses: false
 
       - name: Install Android toolchain
-        run: sdkmanager "platforms;android-37" "build-tools;37.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
 
       - name: Verify Black Ice integration
         working-directory: .
@@ -67,8 +67,8 @@ jobs:
           ./gradlew --stop || true
           cp "$GITHUB_WORKSPACE/Black-Ice-1.0.4-test.apk" "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
           unzip -t "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
-          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
-          "$ANDROID_HOME/build-tools/37.0.0/zipalign" -c -P 16 -v 4 "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
           sha256sum "$GITHUB_WORKSPACE/Black-Ice-1.0.4-install.apk"
 
       - name: Upload verified installable APK
