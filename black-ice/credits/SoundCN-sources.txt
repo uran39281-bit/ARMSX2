@@ -1,0 +1,3 @@
+SoundCN: https://github.com/kapishdima/soundcn
+Unchanged OGG files from assets/kenney_interface-sounds/: click_001 (click), back_001 (back), confirmation_001 (success), switch_001 (move).
+Kenney Interface Sounds: CC0; see included license. Repository MIT license also included.
