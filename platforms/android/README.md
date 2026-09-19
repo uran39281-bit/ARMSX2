@@ -7,8 +7,8 @@ The Android app version is configured in `app/build.gradle.kts` under
 `android.defaultConfig`:
 
 ```kotlin
-versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 10003
-versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "1.0.3"
+versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 10004
+versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "1.0.4"
 ```
 
 Change `versionName` to the user-facing release version and increment the integer
