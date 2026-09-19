@@ -93,6 +93,7 @@ val armsx2DiscordSdkDir: String? =
 
 android {
     namespace = "com.armsx2"
+    androidResources { noCompress += listOf("mp3", "ogg") }
     compileSdk = 37
     ndkVersion = armsx2NdkVersion.get()
 
@@ -100,8 +101,8 @@ android {
         applicationId = armsx2ApplicationId.get()
         minSdk = armsx2MinSdk.get().toInt()
         targetSdk = 37
-        versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 10003
-        versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "1.0.3"
+        versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 10004
+        versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {

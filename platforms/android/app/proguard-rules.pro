@@ -46,3 +46,7 @@
 # DiscordNative's methods are bound by JNI name from libarmsx2_discord.so. R8 cannot see either
 # link, and stripping or renaming them fails at runtime rather than at build time.
 -keep class com.armsx2.discord.** { *; }
+
+# Black Ice WebView bridge and provider.
+-keepclassmembers class dev.aether.preview.MainActivity$LibraryBridge { @android.webkit.JavascriptInterface <methods>; }
+-keep class dev.aether.preview.SessionProvider { *; }
