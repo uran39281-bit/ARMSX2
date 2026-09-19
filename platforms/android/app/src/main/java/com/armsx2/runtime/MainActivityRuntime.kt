@@ -544,7 +544,7 @@ open class MainActivityRuntime : ComponentActivity() {
         private fun finishToLauncherIfRequested() {
             if (quitAfterStop) {
                 quitAfterStop = false
-                instance?.runOnUiThread { instance?.finishAndRemoveTask() }
+                instance?.runOnUiThread { instance?.finish() }
             }
         }
 
@@ -573,7 +573,7 @@ open class MainActivityRuntime : ComponentActivity() {
         @JvmStatic
         fun exitApp() {
             if (eState.value == EmuState.STOPPED && !vmStopInProgress && !vmRunLoopActive) {
-                instance?.runOnUiThread { instance?.finishAndRemoveTask() }
+                instance?.runOnUiThread { instance?.finish() }
             } else {
                 quitAfterStop = true
                 stop()
@@ -2548,6 +2548,16 @@ open class MainActivityRuntime : ComponentActivity() {
                         PlayTime.startSession(currentGame.value?.serial)
                     else
                         PlayTime.endSession()
+                }
+                // Black Ice records actual RUNNING intervals, independent of serial identification.
+                androidx.compose.runtime.LaunchedEffect(eState.value) {
+                    blackIceSession(if (eState.value == EmuState.RUNNING) "running" else "paused")
+                    if (eState.value == EmuState.RUNNING) {
+                        while (true) {
+                            kotlinx.coroutines.delay(15000)
+                            blackIceSession("checkpoint")
+                        }
+                    }
                 }
                 // Capture achievement progress while the game is loaded. Only the achievements panel
                 // used to do this, so the library showed nothing for anyone who never opened it. The
@@ -5167,7 +5177,16 @@ open class MainActivityRuntime : ComponentActivity() {
         }
     }
 
+    private var blackIceForeground = false
+
+    private fun blackIceSession(event: String) {
+        if (!blackIceForeground && (event == "running" || event == "checkpoint")) return
+        runCatching { contentResolver.call(android.net.Uri.parse("content://${packageName}.blackice.session"), event, null, null) }
+    }
+
     override fun onPause() {
+        blackIceForeground = false
+        blackIceSession("paused")
         // Take the second-display panel down with the app. A Presentation is not torn down by the
         // activity stopping, so it otherwise stayed on the external screen while the user was off
         // doing something else (reported).
@@ -5211,6 +5230,8 @@ open class MainActivityRuntime : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        blackIceForeground = true
+        if (eState.value == EmuState.RUNNING) blackIceSession("running")
         runCatching { com.armsx2.SecondScreen.setForeground(applicationContext, true) }
         // Woke from a real sleep (paired with the onPause sleep chime): play the wake chime + a brief
         // top-left "Welcome Back!". A plain background return never set wasAsleep, so this only fires
@@ -5249,6 +5270,7 @@ open class MainActivityRuntime : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        blackIceSession("paused")
         getSystemService(android.hardware.input.InputManager::class.java)
             ?.unregisterInputDeviceListener(inputDeviceListener)
         // On a CONFIGURATION-driven recreate (e.g. Samsung DeX moving the activity to
