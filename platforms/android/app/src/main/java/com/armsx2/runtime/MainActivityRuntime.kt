@@ -178,6 +178,7 @@ open class MainActivityRuntime : ComponentActivity() {
         // wizard is re-shown so the user can re-grant folder access.
         val setupRecoveryNeeded = mutableStateOf(false)
         val setupEditorVisible = mutableStateOf(false)
+        val blackIceBiosSetup = mutableStateOf(false)
         val nativeReady = mutableStateOf(false)
         // Tree URI of the user-picked PCSX2 system folder (where bios/,
         // memcards/, etc. should live). Persisted as `systemDir` pref.
@@ -1619,6 +1620,7 @@ open class MainActivityRuntime : ComponentActivity() {
             prefs.edit { putBoolean("setupComplete", true) }
             setupComplete.value = true
             setupEditorVisible.value = false
+            blackIceBiosSetup.value = false
         }
 
         fun reopenSetup() {
@@ -2438,6 +2440,7 @@ open class MainActivityRuntime : ComponentActivity() {
         setContent {
             com.armsx2.ui.theme.Armsx2Theme {
             val themedWindowBackground = androidx.compose.material3.MaterialTheme.colorScheme.background
+            androidx.compose.runtime.LaunchedEffect(bios.value) { publishBlackIceBios() }
             androidx.compose.runtime.SideEffect {
                 window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(themedWindowBackground.toArgb()))
             }
@@ -5184,7 +5187,14 @@ open class MainActivityRuntime : ComponentActivity() {
         runCatching { contentResolver.call(android.net.Uri.parse("content://${packageName}.blackice.session"), event, null, null) }
     }
 
+    private fun publishBlackIceBios() {
+        runCatching {
+            contentResolver.call(android.net.Uri.parse("content://${packageName}.blackice.session"), "bios", bios.value.orEmpty(), null)
+        }
+    }
+
     override fun onPause() {
+        publishBlackIceBios()
         blackIceForeground = false
         blackIceSession("paused")
         // Take the second-display panel down with the app. A Presentation is not torn down by the
@@ -5292,6 +5302,12 @@ open class MainActivityRuntime : ComponentActivity() {
     }
 
     private fun handleExternalLaunchIntent(intent: Intent?) {
+        if (intent?.getBooleanExtra("blackIceBiosSetup", false) == true) {
+            blackIceBiosSetup.value = true
+            setupEditorVisible.value = true
+            intent.removeExtra("blackIceBiosSetup")
+            return
+        }
         val raw = extractLaunchUri(intent) ?: return
         persistReadGrant(intent, raw)
         // Frontends (Cocoon/Daijisho/ES-DE) list the .cue, since that's the canonical disc

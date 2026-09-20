@@ -1,0 +1,32 @@
+name: Black Ice UI compile check
+on:
+  push:
+    branches: [black-ice-ui-refresh]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ui:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install Android toolchain
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
+      - name: Verify home and integration
+        run: |
+          node black-ice/tests/library-ui.cjs
+          python3 black-ice/tests/integration.py
+      - name: Compile Android UI and resources
+        working-directory: platforms/android
+        run: ./gradlew :app:compileGithubDebugKotlin :app:compileGithubDebugJavaWithJavac

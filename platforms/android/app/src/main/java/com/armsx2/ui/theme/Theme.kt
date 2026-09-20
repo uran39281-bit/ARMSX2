@@ -56,13 +56,21 @@ object ThemeBridge {
 object ThemePreferences {
     private const val PreferenceKey = "ui.theme.mode"
 
-    val mode = mutableStateOf(ThemeMode.System)
+    val mode = mutableStateOf(ThemeMode.Blue)
 
     fun load() {
         // Name-matched rather than hand-enumerated, so adding a colour needs no change here.
         // Anything unrecognised — including the legacy "Dark" — resolves to Blue, which is
         // exactly what "Dark" used to render as.
-        val stored = MainActivityRuntime.prefs.getString(PreferenceKey, ThemeMode.System.name)
+        var stored = MainActivityRuntime.prefs.getString(PreferenceKey, ThemeMode.Blue.name)
+        // Migrate the inherited system default once; later explicit theme choices remain valid.
+        if (!MainActivityRuntime.prefs.getBoolean("blackIce.paletteMigrated", false)) {
+            if (stored == ThemeMode.System.name) stored = ThemeMode.Blue.name
+            MainActivityRuntime.prefs.edit {
+                putString(PreferenceKey, stored)
+                putBoolean("blackIce.paletteMigrated", true)
+            }
+        }
         mode.value = ThemeMode.entries.firstOrNull { it.name == stored } ?: ThemeMode.Blue
         loadCustomColor()
         loadOledBase()
@@ -308,11 +316,11 @@ object LauncherOrientationPreferences {
 private val NightScheme = darkColorScheme(
     primary = ArmsBlueBright,
     onPrimary = Color(0xFF07101F),
-    primaryContainer = Color(0xFF183B73),
+    primaryContainer = Color(0xFF203247),
     onPrimaryContainer = Color(0xFFD9E7FF),
     secondary = ArmsCyan,
     onSecondary = Color(0xFF001F25),
-    secondaryContainer = Color(0xFF123944),
+    secondaryContainer = Color(0xFF23333E),
     onSecondaryContainer = Color(0xFFB9F3FF),
     tertiary = ArmsViolet,
     background = NightBackground,

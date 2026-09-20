@@ -1,8 +1,12 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const nodes=new Map();let files=[],picked=0,played=[],removed=[];
+const nodes=new Map();let files=[],picked=0,played=[],removed=[],biosPresent=false,biosRequests=0;
 const node=s=>{if(!nodes.has(s))nodes.set(s,{innerHTML:'',textContent:'',style:{},setAttribute(){},focus(){},classList:{toggle(){}}});return nodes.get(s)};
 const listeners={},storage=new Map([['aether-preview-v1',JSON.stringify({favorites:[0,1],slots:[{game:0,id:1}]})]]);
-const ctx={document:{querySelector:node,querySelectorAll:()=>[],addEventListener:(k,f)=>listeners[k]=f,body:{classList:{toggle(){}}}},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},setInterval(){},setTimeout(){},clearTimeout(){},queueMicrotask(){},AndroidLibrary:{getLibrary:()=>JSON.stringify(files),chooseGames:()=>picked++,play:id=>played.push(id),remove:id=>removed.push(id),openEmulator(){}},console};ctx.window=ctx;ctx.scrollTo=()=>{};vm.createContext(ctx);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../../platforms/android/app/src/main/assets/index.html'),'utf8').split('<script>')[1].split('</script>')[0],ctx);
+const ctx={document:{querySelector:node,querySelectorAll:()=>[],addEventListener:(k,f)=>listeners[k]=f,body:{classList:{toggle(){}}}},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},setInterval(){},setTimeout(){},clearTimeout(){},queueMicrotask(){},AndroidLibrary:{biosReady:()=>biosPresent,openBios:()=>biosRequests++,getLibrary:()=>JSON.stringify(files),chooseGames:()=>picked++,play:id=>played.push(id),remove:id=>removed.push(id),openEmulator(){}},console};ctx.window=ctx;ctx.scrollTo=()=>{};vm.createContext(ctx);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../../platforms/android/app/src/main/assets/index.html'),'utf8').split('<script>')[1].split('</script>')[0],ctx);
+assert.match(node('#main').innerHTML,/Start with your PS2 BIOS/);
+vm.runInContext('actions.bios()',ctx);assert.equal(biosRequests,1);
+assert.equal(picked,0);
+biosPresent=true;ctx.refreshLibrary();
 assert.match(node('#main').innerHTML,/Your games start here/);
 assert.doesNotMatch(node('#main').innerHTML,/God of War|Shadow of the Colossus/);
 vm.runInContext('actions.add()',ctx);assert.equal(picked,1);

@@ -15,11 +15,22 @@ public final class SessionProvider extends ContentProvider {
  private static SharedPreferences prefs(Context c){return c.getSharedPreferences("black-ice-playtime",0);}
  static synchronized void begin(Context c,int id){runningSince=0;prefs(c).edit().putInt("activeId",id).putLong("last-"+id,0).putBoolean("counted",false).commit();}
  static synchronized void clear(Context c){runningSince=0;prefs(c).edit().remove("activeId").remove("started").commit();}
+ static boolean biosReady(Context c){
+  String path=prefs(c).getString("biosPath",null);
+  if(path==null)path=c.getSharedPreferences("ARMSX2",0).getString("bios","");
+  java.io.File file=new java.io.File(path);
+  return file.isFile()&&file.canRead()&&file.length()>0;
+ }
  @Override public boolean onCreate(){return true;}
  @Override public Bundle call(String method,String arg,Bundle extras){
   if(Binder.getCallingUid()!=Process.myUid())throw new SecurityException("Private session endpoint");
   synchronized(SessionProvider.class){
-   SharedPreferences p=prefs(getContext());int id=p.getInt("activeId",-1);if(id<0)return Bundle.EMPTY;
+   SharedPreferences p=prefs(getContext());
+   if("bios".equals(method)){
+    p.edit().putString("biosPath",arg==null?"":arg).commit();
+    return Bundle.EMPTY;
+   }
+   int id=p.getInt("activeId",-1);if(id<0)return Bundle.EMPTY;
    long now=SystemClock.elapsedRealtime();
    if("running".equals(method)){if(runningSince==0)runningSince=now;}
    else if("paused".equals(method)||"checkpoint".equals(method)){

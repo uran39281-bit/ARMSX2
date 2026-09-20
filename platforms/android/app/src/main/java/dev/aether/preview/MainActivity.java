@@ -121,6 +121,13 @@ public final class MainActivity extends Activity {
         @JavascriptInterface public void chooseCover(int id){covers.choose(id);}
         @JavascriptInterface public void chooseGames() { runOnUiThread(() -> pickGames()); }
         @JavascriptInterface public void play(int id) { filesWorker.execute(() -> launchFile(id)); }
+        @JavascriptInterface public boolean biosReady() { return SessionProvider.biosReady(MainActivity.this); }
+        @JavascriptInterface public void openBios() {
+            runOnUiThread(() -> {
+                try { startActivity(new Intent(MainActivity.this,com.armsx2.Main.class).putExtra("blackIceBiosSetup",true)); }
+                catch(Exception e) { notice("BIOS setup could not open. Please try again."); }
+            });
+        }
         @JavascriptInterface public void openEmulator() { runOnUiThread(() -> openCoreSetup()); }
         @JavascriptInterface public void remove(int id) {
             filesWorker.execute(() -> {

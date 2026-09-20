@@ -53,7 +53,7 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
             biosInfo = info,
             selectedBiosPath = existingBios?.absolutePath,
             gameFolders = MainActivityRuntime.romsDirs.value,
-            page = if (MainActivityRuntime.setupComplete.value) 1 else 0,
+            page = if (MainActivityRuntime.blackIceBiosSetup.value) 2 else if (MainActivityRuntime.setupComplete.value) 1 else 0,
         )
     }
 
@@ -284,4 +284,3 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
         NativeApp.getBiosInfoFromFd(descriptor.detachFd())
     }.getOrNull()
 }
-

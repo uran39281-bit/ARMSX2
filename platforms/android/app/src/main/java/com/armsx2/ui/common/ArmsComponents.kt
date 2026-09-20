@@ -100,6 +100,18 @@ fun ArmsBackdrop(
             // exposed strip reads as a bar (most visibly in landscape).
             if (backgroundLayer != null) {
                 Box(modifier = Modifier.fillMaxSize(), content = backgroundLayer)
+            } else {
+                Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(
+                    colors.background, colors.surface.copy(alpha = 0.7f), colors.background
+                ))))
+                Canvas(Modifier.fillMaxSize()) {
+                    val center = Offset(size.width * 0.85f, size.height * 0.2f)
+                    for (ring in 1..3) drawCircle(
+                        color = colors.primary.copy(alpha = 0.035f),
+                        radius = size.minDimension * (0.35f + ring * 0.12f),
+                        center = center, style = Stroke(1.dp.toPx())
+                    )
+                }
             }
             Box(
                 modifier = Modifier
@@ -116,10 +128,9 @@ fun ArmsBackdrop(
 @Composable
 fun ArmsLogo(modifier: Modifier = Modifier, showWordmark: Boolean = true, iconSize: Dp = 42.dp) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        // The ARMSX2 tower mark (bagas's logo), circle-cropped so its dark square
-        // corners don't show — matches the round hero render.
+        // Use the same Black Ice mark as the home screen and launcher.
         Image(
-            painter = painterResource(id = R.drawable.savetowerforeground),
+            painter = painterResource(id = R.drawable.ic_black_ice),
             contentDescription = "Black Ice",
             modifier = Modifier.size(iconSize).clip(CircleShape),
         )

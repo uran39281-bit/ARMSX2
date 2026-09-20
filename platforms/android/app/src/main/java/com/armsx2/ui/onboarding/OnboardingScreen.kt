@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.armsx2.i18n.str
+import com.armsx2.ui.common.BlackIceIcon
 import com.armsx2.ui.common.ArmsBackdrop
 import com.armsx2.ui.common.ArmsLogo
 import com.armsx2.ui.common.StatusChip
@@ -129,7 +130,7 @@ fun OnboardingScreen(viewModel: OnboardingViewModel = viewModel()) {
         }
     }
 
-    LaunchedEffect(Unit) { viewModel.load() }
+    LaunchedEffect(com.armsx2.runtime.MainActivityRuntime.blackIceBiosSetup.value) { viewModel.load() }
 
     ArmsBackdrop {
         BoxWithConstraints(
@@ -363,7 +364,7 @@ private fun WelcomePage(compact: Boolean) {
 private fun SetupBenefit(number: String, text: String, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier.fillMaxWidth().defaultMinSize(minHeight = 66.dp),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.68f),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)),
     ) {
@@ -500,7 +501,7 @@ private fun BiosPage(state: OnboardingUiState, compact: Boolean, onPick: () -> U
             else -> {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(12.dp),
                     color = MaterialTheme.colorScheme.primaryContainer,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.55f)),
                 ) {
@@ -535,7 +536,7 @@ private fun BiosOptionRow(candidate: BiosCandidate, selected: Boolean, onClick: 
     Surface(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
         border = BorderStroke(
             1.dp,
@@ -589,12 +590,12 @@ private fun GamesPage(state: OnboardingUiState, onAdd: () -> Unit, onRemove: (St
                 val label = Uri.parse(raw).lastPathSegment?.substringAfterLast(':')?.ifBlank { null } ?: raw
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(12.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)),
                 ) {
                     Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Text("▦", color = MaterialTheme.colorScheme.primary, fontSize = 20.sp)
+                        BlackIceIcon("folder")
                         Spacer(Modifier.width(12.dp))
                         Text(label, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
                         TextButton(onClick = { onRemove(raw) }) { Text(str("setup.button.remove"), color = MaterialTheme.colorScheme.error) }
@@ -630,11 +631,15 @@ private fun ReadyPage(state: OnboardingUiState, compact: Boolean) {
 @Composable
 private fun SetupPage(title: String, description: String, content: @Composable () -> Unit) {
     Column(Modifier.fillMaxWidth()) {
+        Text("BLACK ICE / SETUP", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, letterSpacing = 2.sp)
+        Spacer(Modifier.height(12.dp))
         Text(title, style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
         Spacer(Modifier.height(6.dp))
         Text(description, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(24.dp))
-        content()
+        Surface(shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.surface.copy(alpha = 0.86f), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))) {
+            Column(Modifier.fillMaxWidth().padding(20.dp)) { content() }
+        }
     }
 }
 
@@ -650,8 +655,8 @@ private fun ChoiceCard(
     Surface(
         onClick = onClick,
         modifier = modifier.defaultMinSize(minHeight = 96.dp)
-            .padFocusRing(RoundedCornerShape(20.dp)),
-        shape = RoundedCornerShape(20.dp),
+            .padFocusRing(RoundedCornerShape(12.dp)),
+        shape = RoundedCornerShape(12.dp),
         color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
         border = BorderStroke(
             if (selected) 2.dp else 1.dp,
@@ -661,11 +666,11 @@ private fun ChoiceCard(
         Row(Modifier.padding(horizontal = 18.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             Surface(
                 modifier = Modifier.size(56.dp),
-                shape = CircleShape,
+                shape = RoundedCornerShape(12.dp),
                 color = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.16f) else MaterialTheme.colorScheme.surface,
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Text(glyph, color = MaterialTheme.colorScheme.primary, fontSize = 23.sp, fontWeight = FontWeight.Bold)
+                    BlackIceIcon(glyph)
                 }
             }
             Spacer(Modifier.width(14.dp))

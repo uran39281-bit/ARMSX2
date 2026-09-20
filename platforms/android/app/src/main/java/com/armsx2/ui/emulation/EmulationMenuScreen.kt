@@ -71,6 +71,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.armsx2.i18n.str
 import com.armsx2.runtime.MainActivityRuntime
+import com.armsx2.ui.common.BlackIceIcon
 import com.armsx2.ui.InGameOverlay
 import com.armsx2.ui.achievements.AchievementItem
 import com.armsx2.ui.common.GameCoverArt
@@ -449,12 +450,7 @@ private fun MenuRailTab(tab: EmulationMenuTab, active: Boolean, onSelect: (Emula
         ),
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = tabGlyph(tab),
-                fontSize = 23.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            BlackIceIcon(glyph = tabGlyph(tab), color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -495,12 +491,7 @@ private fun MenuTab(tab: EmulationMenuTab, active: Boolean, onSelect: (Emulation
                 else MaterialTheme.colorScheme.surface.copy(alpha = 0.72f),
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = tabGlyph(tab),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    BlackIceIcon(glyph = tabGlyph(tab), color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             Text(
@@ -515,11 +506,7 @@ private fun MenuTab(tab: EmulationMenuTab, active: Boolean, onSelect: (Emulation
     }
 }
 
-// Rail tab icons. No monochrome Unicode exists for gamepad/wrench/trophy/display, so those
-// use color emoji (the bundled NotoColorEmoji renders them); Session keeps its clean text
-// glyph. Performance uses the high-voltage emoji so it reads as a yellow lightning bolt.
-// Options carries the settings gear; the full-settings shortcut below the rail divider uses
-// a distinct "open" glyph so there aren't two gears.
+// Logical icon tokens rendered as monochrome paths by BlackIceIcon.
 private fun tabGlyph(tab: EmulationMenuTab): String = when (tab) {
     EmulationMenuTab.Session -> "☰"
     EmulationMenuTab.Graphics -> "🖥️"
@@ -1567,13 +1554,8 @@ private fun ActionGrid(actions: List<MenuAction>) {
                 ),
             ) {
                 Row(Modifier.padding(horizontal = 13.dp, vertical = 11.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        item.glyph,
-                        color = item.accent ?: MaterialTheme.colorScheme.primary,
-                        fontSize = 19.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(30.dp),
-                    )
+                    BlackIceIcon(item.glyph, Modifier.size(24.dp), item.accent ?: MaterialTheme.colorScheme.primary)
+                    Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
                         Text(item.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
                         if (item.detail.isNotBlank()) {
@@ -1806,7 +1788,7 @@ private fun CompactAction(title: String, glyph: String, modifier: Modifier, onCl
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(glyph, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+            BlackIceIcon(glyph)
             Text(title, style = MaterialTheme.typography.labelLarge, maxLines = 2)
         }
     }

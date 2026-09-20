@@ -578,24 +578,24 @@ private fun skinKeyFor(id: TouchButtonId): String? = when (id) {
 }
 
 private fun drawableFor(id: TouchButtonId, pressed: Boolean): Int = when (id) {
-    TouchButtonId.CROSS    -> if (pressed) R.drawable.pad_cross_pressed    else R.drawable.pad_cross
-    TouchButtonId.CIRCLE   -> R.drawable.pad_circle
-    TouchButtonId.SQUARE   -> R.drawable.pad_square
-    TouchButtonId.TRIANGLE -> if (pressed) R.drawable.pad_triangle_pressed else R.drawable.pad_triangle
-    TouchButtonId.L1       -> if (pressed) R.drawable.pad_l1_pressed       else R.drawable.pad_l1
-    TouchButtonId.L2       -> if (pressed) R.drawable.pad_l2_pressed       else R.drawable.pad_l2
-    TouchButtonId.R1       -> if (pressed) R.drawable.pad_r1_pressed       else R.drawable.pad_r1
-    TouchButtonId.R2       -> if (pressed) R.drawable.pad_r2_pressed       else R.drawable.pad_r2
-    TouchButtonId.START    -> if (pressed) R.drawable.pad_start_pressed    else R.drawable.pad_start
-    TouchButtonId.SELECT   -> if (pressed) R.drawable.pad_select_pressed   else R.drawable.pad_select
-    TouchButtonId.L3       -> if (pressed) R.drawable.pad_l3_pressed       else R.drawable.pad_l3
-    TouchButtonId.R3       -> if (pressed) R.drawable.pad_r3_pressed       else R.drawable.pad_r3
+    TouchButtonId.CROSS    -> if (pressed) R.drawable.ice_pad_cross_pressed    else R.drawable.ice_pad_cross
+    TouchButtonId.CIRCLE   -> R.drawable.ice_pad_circle
+    TouchButtonId.SQUARE   -> R.drawable.ice_pad_square
+    TouchButtonId.TRIANGLE -> if (pressed) R.drawable.ice_pad_triangle_pressed else R.drawable.ice_pad_triangle
+    TouchButtonId.L1       -> if (pressed) R.drawable.ice_pad_l1_pressed       else R.drawable.ice_pad_l1
+    TouchButtonId.L2       -> if (pressed) R.drawable.ice_pad_l2_pressed       else R.drawable.ice_pad_l2
+    TouchButtonId.R1       -> if (pressed) R.drawable.ice_pad_r1_pressed       else R.drawable.ice_pad_r1
+    TouchButtonId.R2       -> if (pressed) R.drawable.ice_pad_r2_pressed       else R.drawable.ice_pad_r2
+    TouchButtonId.START    -> if (pressed) R.drawable.ice_pad_start_pressed    else R.drawable.ice_pad_start
+    TouchButtonId.SELECT   -> if (pressed) R.drawable.ice_pad_select_pressed   else R.drawable.ice_pad_select
+    TouchButtonId.L3       -> if (pressed) R.drawable.ice_pad_l3_pressed       else R.drawable.ice_pad_l3
+    TouchButtonId.R3       -> if (pressed) R.drawable.ice_pad_r3_pressed       else R.drawable.ice_pad_r3
     // DPad / sticks render their own composed sprites; PAUSE / FAST_FORWARD / macros render their own.
     TouchButtonId.DPAD, TouchButtonId.L_STICK, TouchButtonId.R_STICK,
     TouchButtonId.PAUSE, TouchButtonId.PRESSURE, TouchButtonId.FAST_FORWARD,
     TouchButtonId.MACRO1, TouchButtonId.MACRO2, TouchButtonId.MACRO3, TouchButtonId.MACRO4,
     TouchButtonId.SAVE_STATE, TouchButtonId.LOAD_STATE, TouchButtonId.SCREENSHOT,
-    TouchButtonId.ANALOG_EXTRA -> R.drawable.pad_cross
+    TouchButtonId.ANALOG_EXTRA -> R.drawable.ice_pad_cross
 }
 
 /** Pressure-sensitivity modifier button. Emits no PS2 keycode; while held it
@@ -635,7 +635,7 @@ private fun PressureButtonWidget(cfg: TouchButtonCfg, edit: Boolean) {
             Modifier
                 .fillMaxSize()
                 .clip(CircleShape)
-                .background(Color(if (held) 0xFF3A6EA5 else 0xFF1A1A1A).copy(alpha = opacity))
+                .background(Color(if (held) 0xFF203247 else 0xFF10161F).copy(alpha = opacity))
                 .border(1.dp, Color.White.copy(alpha = 0.35f * opacity), CircleShape),
             contentAlignment = Alignment.Center,
         ) {
@@ -929,8 +929,8 @@ private fun PauseGlyph(sizeDp: Float, opacity: Float) {
     Box(
         modifier = Modifier
             .size(disc)
-            .clip(CircleShape)
-            .background(Color.Black.copy(alpha = (0.55f * a).coerceIn(0.32f, 0.60f) * fade)),
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFF10161F).copy(alpha = (0.55f * a).coerceIn(0.32f, 0.60f) * fade)),
         contentAlignment = Alignment.Center,
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(barW)) {
@@ -939,7 +939,7 @@ private fun PauseGlyph(sizeDp: Float, opacity: Float) {
                     Modifier
                         .size(barW, barH)
                         .background(
-                            Color.White.copy(alpha = (0.95f * a).coerceIn(0.72f, 1.0f) * fade),
+                            Color(0xFFD8E3EA).copy(alpha = (0.95f * a).coerceIn(0.72f, 1.0f) * fade),
                             RoundedCornerShape(barW / 2),
                         )
                 )
@@ -1220,7 +1220,7 @@ private fun DpadWidget(cfg: TouchButtonCfg, edit: Boolean) {
         // sprite rotated 180° and sat correctly already.
         Image(
             painter = skUp ?: painterResource(
-                if (active.value.up) R.drawable.pad_dpad_up_pressed else R.drawable.pad_dpad_up
+                if (active.value.up) R.drawable.ice_pad_dpad_up_pressed else R.drawable.ice_pad_dpad_up
             ),
             contentDescription = str("touch.dpad.up.description"),
             contentScale = ContentScale.Fit,
@@ -1233,7 +1233,7 @@ private fun DpadWidget(cfg: TouchButtonCfg, edit: Boolean) {
         )
         Image(
             painter = skDown ?: painterResource(
-                if (active.value.down) R.drawable.pad_dpad_up_pressed else R.drawable.pad_dpad_up
+                if (active.value.down) R.drawable.ice_pad_dpad_up_pressed else R.drawable.ice_pad_dpad_up
             ),
             contentDescription = str("touch.dpad.down.description"),
             contentScale = ContentScale.Fit,
@@ -1246,7 +1246,7 @@ private fun DpadWidget(cfg: TouchButtonCfg, edit: Boolean) {
         )
         Image(
             painter = skLeft ?: painterResource(
-                if (active.value.left) R.drawable.pad_dpad_left_pressed else R.drawable.pad_dpad_left
+                if (active.value.left) R.drawable.ice_pad_dpad_left_pressed else R.drawable.ice_pad_dpad_left
             ),
             contentDescription = str("touch.dpad.left.description"),
             contentScale = ContentScale.Fit,
@@ -1258,7 +1258,7 @@ private fun DpadWidget(cfg: TouchButtonCfg, edit: Boolean) {
         )
         Image(
             painter = skRight ?: painterResource(
-                if (active.value.right) R.drawable.pad_dpad_right_pressed else R.drawable.pad_dpad_right
+                if (active.value.right) R.drawable.ice_pad_dpad_right_pressed else R.drawable.ice_pad_dpad_right
             ),
             contentDescription = str("touch.dpad.right.description"),
             contentScale = ContentScale.Fit,
@@ -1459,7 +1459,7 @@ private fun StickWidget(cfg: TouchButtonCfg, edit: Boolean) {
         val stickSide = if (cfg.id == TouchButtonId.L_STICK) "left" else "right"
         Image(
             painter = skinPainter("analog_base_$stickSide") ?: skinPainter("analog_base")
-                ?: painterResource(R.drawable.pad_stick_base),
+                ?: painterResource(R.drawable.ice_pad_stick_base),
             contentDescription = cfg.id.label + " base",
             contentScale = ContentScale.Fit,
             alpha = opacity,
@@ -1473,7 +1473,7 @@ private fun StickWidget(cfg: TouchButtonCfg, edit: Boolean) {
         val thumbSizeDp = cfg.sizeDp * 0.62f
         Image(
             painter = skinPainter("analog_stick_$stickSide") ?: skinPainter("analog_stick")
-                ?: painterResource(R.drawable.pad_thumb),
+                ?: painterResource(R.drawable.ice_pad_thumb),
             contentDescription = cfg.id.label + " thumb",
             contentScale = ContentScale.Fit,
             alpha = opacity,
@@ -1927,7 +1927,7 @@ private fun DisabledMarker() {
 @Composable
 private fun EditAdornment(id: TouchButtonId? = null) {
     val isSelected = id != null && TouchControls.selectedButton.value == id
-    val color = if (isSelected) Color(0xFFFFD33A) else Colors.pasx2_blue
+    val color = if (isSelected) Color(0xFF7AB4FF) else Colors.pasx2_blue
     val width = if (isSelected) 3.dp else 2.dp
     Box(
         Modifier
@@ -2014,7 +2014,7 @@ private fun EditToolbar(modifier: Modifier = Modifier) {
             if (MainActivityRuntime.eState.value == EmuState.RUNNING || MainActivityRuntime.eState.value == EmuState.PAUSED)
                 str("touch.editor.scopeGame")
             else str("touch.editor.scopeGlobal"),
-            color = Color(0xFFFFD33A), fontSize = 11.sp, fontWeight = FontWeight.SemiBold,
+            color = Color(0xFF7AB4FF), fontSize = 11.sp, fontWeight = FontWeight.SemiBold,
         )
         // Action chips up top — save commits the live layout into the
         // active profile, discard reverts to the saved version, reset
@@ -2117,7 +2117,7 @@ private fun EditToolbar(modifier: Modifier = Modifier) {
             ) {
                 Text(
                     selectedCfg.id.label + " size",
-                    color = Color(0xFFFFD33A),
+                    color = Color(0xFF7AB4FF),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -2133,8 +2133,8 @@ private fun EditToolbar(modifier: Modifier = Modifier) {
                         .width(240.dp)
                         .height(28.dp),
                     colors = androidx.compose.material3.SliderDefaults.colors(
-                        thumbColor = Color(0xFFFFD33A),
-                        activeTrackColor = Color(0xFFFFD33A),
+                        thumbColor = Color(0xFF7AB4FF),
+                        activeTrackColor = Color(0xFF7AB4FF),
                         inactiveTrackColor = Color(0xFF444433),
                     ),
                 )
@@ -2183,7 +2183,7 @@ private fun EditToolbar(modifier: Modifier = Modifier) {
                 ) {
                     Text(
                         "D-Pad spacing",
-                        color = Color(0xFFFFD33A),
+                        color = Color(0xFF7AB4FF),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -2195,8 +2195,8 @@ private fun EditToolbar(modifier: Modifier = Modifier) {
                             .width(240.dp)
                             .height(28.dp),
                         colors = androidx.compose.material3.SliderDefaults.colors(
-                            thumbColor = Color(0xFFFFD33A),
-                            activeTrackColor = Color(0xFFFFD33A),
+                            thumbColor = Color(0xFF7AB4FF),
+                            activeTrackColor = Color(0xFF7AB4FF),
                             inactiveTrackColor = Color(0xFF444433),
                         ),
                     )

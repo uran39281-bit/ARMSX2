@@ -124,7 +124,7 @@ fun BiosManagerScreen(onBack: () -> Unit, game: GameInfo? = null, viewModel: Bio
                     modifier = Modifier.fillMaxWidth().height(280.dp)
                         .controllerFocusable(
                             "bios.empty.import",
-                            RoundedCornerShape(24.dp),
+                            RoundedCornerShape(12.dp),
                             onConfirm = { picker.launch(arrayOf("application/octet-stream", "*/*")) },
                         ),
                 )
@@ -263,7 +263,7 @@ private fun BiosRow(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(12.dp),
         color = if (item.selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, if (item.selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
     ) {
