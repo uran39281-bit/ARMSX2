@@ -74,6 +74,7 @@ private val setupStepKeys = listOf(
 fun OnboardingScreen(viewModel: OnboardingViewModel = viewModel()) {
     val state = viewModel.state.value
     val canContinue = viewModel.canContinue()
+    val biosOnly = com.armsx2.runtime.MainActivityRuntime.blackIceBiosSetup.value
     var swipeDistance by remember { mutableFloatStateOf(0f) }
     // Item 7: BIOS onboarding is folder-based (refresh parity) — pick a folder and
     // every valid BIOS inside is imported and made available here and in the BIOS
@@ -147,6 +148,8 @@ fun OnboardingScreen(viewModel: OnboardingViewModel = viewModel()) {
                         onDragEnd = {
                             val threshold = size.width * 0.16f
                             when {
+                                biosOnly && swipeDistance > threshold && !state.busy -> viewModel.cancelBiosSetup()
+                                biosOnly && swipeDistance < -threshold && canContinue && !state.busy -> viewModel.finish()
                                 swipeDistance > threshold && state.page > 0 && !state.busy -> viewModel.previous()
                                 swipeDistance < -threshold && state.page < setupStepKeys.lastIndex && canContinue && !state.busy -> viewModel.next()
                             }
@@ -165,7 +168,7 @@ fun OnboardingScreen(viewModel: OnboardingViewModel = viewModel()) {
                     )
                     Column(Modifier.weight(1.08f).fillMaxHeight().padding(end = 8.dp)) {
                         Spacer(Modifier.height(18.dp))
-                        PageIndicator(state.page, Modifier.align(Alignment.CenterHorizontally))
+                        PageIndicator(state.page, biosOnly, Modifier.align(Alignment.CenterHorizontally))
                         Spacer(Modifier.height(8.dp))
                         AnimatedContent(
                             targetState = state.page,
@@ -192,8 +195,10 @@ fun OnboardingScreen(viewModel: OnboardingViewModel = viewModel()) {
                             canContinue = viewModel.canContinue(),
                             busy = state.busy,
                             compact = false,
-                            onBack = viewModel::previous,
-                            onNext = if (state.page == setupStepKeys.lastIndex) viewModel::finish else viewModel::next,
+                            finalAction = biosOnly || state.page == setupStepKeys.lastIndex,
+                            biosOnly = biosOnly,
+                            onBack = if (biosOnly) viewModel::cancelBiosSetup else viewModel::previous,
+                            onNext = if (biosOnly || state.page == setupStepKeys.lastIndex) viewModel::finish else viewModel::next,
                         )
                     }
                 }
@@ -205,7 +210,7 @@ fun OnboardingScreen(viewModel: OnboardingViewModel = viewModel()) {
                     ) {
                         ArmsLogo()
                         Spacer(Modifier.weight(1f))
-                        PageIndicator(state.page)
+                        PageIndicator(state.page, biosOnly)
                     }
                     AnimatedContent(
                         targetState = state.page,
@@ -232,8 +237,10 @@ fun OnboardingScreen(viewModel: OnboardingViewModel = viewModel()) {
                         canContinue = viewModel.canContinue(),
                         busy = state.busy,
                         compact = true,
-                        onBack = viewModel::previous,
-                        onNext = if (state.page == setupStepKeys.lastIndex) viewModel::finish else viewModel::next,
+                        finalAction = biosOnly || state.page == setupStepKeys.lastIndex,
+                        biosOnly = biosOnly,
+                        onBack = if (biosOnly) viewModel::cancelBiosSetup else viewModel::previous,
+                        onNext = if (biosOnly || state.page == setupStepKeys.lastIndex) viewModel::finish else viewModel::next,
                     )
                 }
             }
@@ -295,9 +302,10 @@ private fun LandscapeHero(page: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PageIndicator(page: Int, modifier: Modifier = Modifier) {
+private fun PageIndicator(page: Int, biosOnly: Boolean = false, modifier: Modifier = Modifier) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-        setupStepKeys.indices.forEach { index ->
+        val indicators = if (biosOnly) listOf(page) else setupStepKeys.indices.toList()
+        indicators.forEach { index ->
             Surface(
                 modifier = Modifier.width(if (index == page) 26.dp else 8.dp).height(8.dp),
                 shape = CircleShape,
@@ -708,6 +716,8 @@ private fun NavigationBar(
     canContinue: Boolean,
     busy: Boolean,
     compact: Boolean,
+    finalAction: Boolean,
+    biosOnly: Boolean,
     onBack: () -> Unit,
     onNext: () -> Unit,
 ) {
@@ -750,7 +760,14 @@ private fun NavigationBar(
             }
             // "Next", not "Confirm": the welcome page literally says "Hit Next to get started", and
             // these steps advance a wizard rather than commit anything. Reported by Rei Ayanami.
-            Text(if (page == setupStepKeys.lastIndex) str("setup.button.letsGo") else str("setup.button.next"), fontWeight = FontWeight.Bold)
+            Text(
+                when {
+                    biosOnly -> "Save BIOS"
+                    finalAction -> str("setup.button.letsGo")
+                    else -> str("setup.button.next")
+                },
+                fontWeight = FontWeight.Bold,
+            )
         }
     }
 }
