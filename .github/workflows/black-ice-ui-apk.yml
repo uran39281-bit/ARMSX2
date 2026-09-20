@@ -1,0 +1,66 @@
+name: Black Ice 1.0.5 UI APK
+on:
+  push:
+    branches: [black-ice-ui-refresh]
+    paths:
+      - '.github/workflows/black-ice-ui-apk.yml'
+      - 'platforms/android/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install Android toolchain
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358"
+      - name: Fetch verified native build
+        uses: actions/download-artifact@v4
+        with:
+          name: Black-Ice-1.0.4-verified
+          run-id: 35451354715
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: native-base
+      - name: Verify unchanged core and stage native libraries
+        run: |
+          git diff --exit-code da50bee6ac5b480b3199a3251d35b80b950b959c HEAD -- pcsx2 common 3rdparty cmake platforms/android/app/src/main/cpp platforms/android/app/src/main/java/kr/co/iefriends
+          echo "815acd4332b8c6bd3b453b37f1ff1c6ebc4bee892ea8dfd7c1867c2756a8217c  native-base/Black-Ice-1.0.4-install.apk" | sha256sum -c -
+          python3 platforms/android/tools/stage-black-ice-native.py native-base/Black-Ice-1.0.4-install.apk platforms/android/app/src/main/jniLibs
+      - name: Verify home and integration
+        run: |
+          node black-ice/tests/library-ui.cjs
+          python3 black-ice/tests/integration.py
+      - name: Apply Snapdragon 662 performance preset
+        working-directory: platforms/android
+        run: python3 tools/apply-black-ice-sd662-tune.py
+      - name: Build updated interface
+        working-directory: platforms/android
+        run: ./gradlew :app:assembleGithubDebug -PblackIce.reuseNative=true
+      - name: Verify native bytes and collect signing tools
+        run: |
+          python3 platforms/android/tools/stage-black-ice-native.py native-base/Black-Ice-1.0.4-install.apk platforms/android/app/build/outputs/apk/github/debug/app-github-debug.apk --verify
+          mkdir -p delivery/tools/lib64
+          cp platforms/android/app/build/outputs/apk/github/debug/app-github-debug.apk delivery/Black-Ice-1.0.5-ci.apk
+          cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" delivery/tools/
+          cp "$ANDROID_HOME/build-tools/36.0.0/zipalign" delivery/tools/
+          cp "$ANDROID_HOME/build-tools/36.0.0/lib64/libc++.so" delivery/tools/lib64/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Black-Ice-1.0.5-signing-input
+          path: delivery/
+          compression-level: 0
+          if-no-files-found: error

@@ -40,6 +40,8 @@ val armsx2MarchExtra = providers.gradleProperty("armsx2.marchExtra").orElse("")
 // interpreter bisect into the EE recompiler. Never set for a shipped build.
 val armsx2RecTestHooks = providers.gradleProperty("armsx2.recTestHooks").orElse("false")
 val armsx2ApplicationId = providers.gradleProperty("armsx2.applicationId").orElse("com.armsx2")
+// UI-only builds may package the hash-verified native libraries from a matching build.
+val blackIceReuseNative = providers.gradleProperty("blackIce.reuseNative").orElse("false").get().toBoolean()
 val armsx2SigningPropertiesFile = rootProject.file("armsx2_keystore.properties")
 val armsx2SigningProperties = Properties().apply {
     if (armsx2SigningPropertiesFile.isFile) {
@@ -271,7 +273,7 @@ android {
     // (extracted from vc1063 into src/main/jniLibs/arm64-v8a) are packaged directly,
     // so UI/Kotlin iteration doesn't require recompiling the C++ core. Re-enable this
     // block (and the per-buildType cmake blocks above) to rebuild native from source.
-    externalNativeBuild {
+    if (!blackIceReuseNative) externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
             version = "3.22.1"
@@ -293,6 +295,7 @@ android {
             // path — the custom Vulkan driver load silently falls back to
             // the system loader.
             useLegacyPackaging = true
+            if (blackIceReuseNative) keepDebugSymbols += "**/*.so"
         }
     }
 }

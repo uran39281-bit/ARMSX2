@@ -17,5 +17,5 @@ s=(m/'java/com/armsx2/runtime/MainActivityRuntime.kt').read_text()
 assert 'blackIceSession("checkpoint")' in s and 'blackIceForeground = false' in s
 assert 'instance?.finishAndRemoveTask()' not in s
 p=(r/'platforms/android/gradle.properties').read_text()
-assert 'armsx2.versionName=1.0.4' in p and 'armsx2.versionCode=10004' in p
+assert 'armsx2.versionName=1.0.5' in p and 'armsx2.versionCode=10005' in p
 print('PASS: single Black Ice entry point, included-core intent, isolated core process, private VM tracking endpoint, no Usage Access, safe task return, 1.0.4 update identity.')
