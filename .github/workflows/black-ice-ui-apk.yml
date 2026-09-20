@@ -58,9 +58,29 @@ jobs:
           cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" delivery/tools/
           cp "$ANDROID_HOME/build-tools/36.0.0/zipalign" delivery/tools/
           cp "$ANDROID_HOME/build-tools/36.0.0/lib64/libc++.so" delivery/tools/lib64/
+          mkdir -p delivery-chunks
+          split -b 34M -d -a 1 delivery/Black-Ice-1.0.7-ci.apk delivery-chunks/Black-Ice-1.0.7-ci.apk.part-
       - uses: actions/upload-artifact@v4
         with:
           name: Black-Ice-1.0.7-signing-input
           path: delivery/
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Black-Ice-1.0.7-apk-part-0
+          path: delivery-chunks/Black-Ice-1.0.7-ci.apk.part-0
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Black-Ice-1.0.7-apk-part-1
+          path: delivery-chunks/Black-Ice-1.0.7-ci.apk.part-1
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Black-Ice-1.0.7-apk-part-2
+          path: delivery-chunks/Black-Ice-1.0.7-ci.apk.part-2
           compression-level: 0
           if-no-files-found: error
