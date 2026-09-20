@@ -285,6 +285,18 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    /** Leave the BIOS-only editor without advancing into the regular setup wizard. */
+    fun cancelBiosSetup() {
+        if (!MainActivityRuntime.blackIceBiosSetup.value) {
+            previous()
+            return
+        }
+        MainActivityRuntime.blackIceBiosSetup.value = false
+        MainActivityRuntime.instance?.runOnUiThread {
+            MainActivityRuntime.instance?.finish()
+        }
+    }
+
     fun dismissError() {
         state.value = state.value.copy(error = null)
     }
