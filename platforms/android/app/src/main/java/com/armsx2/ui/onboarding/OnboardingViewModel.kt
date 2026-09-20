@@ -267,8 +267,16 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
 
     fun finish() {
         if (!canContinue()) return
+        val returnToBlackIce = MainActivityRuntime.blackIceBiosSetup.value
         val previousRoot = MainActivityRuntime.currentInitDataRoot()
         MainActivityRuntime.finishSetup()
+        if (returnToBlackIce) {
+            // This wizard was opened by the Black Ice Home screen specifically to
+            // collect BIOS + game folders. Do not reveal the core's own library when
+            // setup is done; close this activity so Android returns to Black Ice Home.
+            MainActivityRuntime.closeSetupActivity()
+            return
+        }
         val selectedRoot = MainActivityRuntime.systemDirPosix()
         if (MainActivityRuntime.nativeReady.value && previousRoot != null && previousRoot != selectedRoot) {
             MainActivityRuntime.restartApp(getApplication())
