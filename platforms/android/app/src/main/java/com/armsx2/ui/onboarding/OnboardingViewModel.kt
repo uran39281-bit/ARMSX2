@@ -274,7 +274,9 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
             // This wizard was opened by the Black Ice Home screen specifically to
             // collect BIOS + game folders. Do not reveal the core's own library when
             // setup is done; close this activity so Android returns to Black Ice Home.
-            MainActivityRuntime.closeSetupActivity()
+            MainActivityRuntime.instance?.runOnUiThread {
+                MainActivityRuntime.instance?.finish()
+            }
             return
         }
         val selectedRoot = MainActivityRuntime.systemDirPosix()

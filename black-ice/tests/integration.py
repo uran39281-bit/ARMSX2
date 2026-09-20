@@ -19,5 +19,5 @@ assert 'instance?.finishAndRemoveTask()' not in s
 p=(r/'platforms/android/gradle.properties').read_text()
 assert 'armsx2.versionName=1.0.6' in p and 'armsx2.versionCode=10006' in p
 onboarding = (m/'java/com/armsx2/ui/onboarding/OnboardingViewModel.kt').read_text()
-assert 'returnToBlackIce' in onboarding and 'closeSetupActivity()' in onboarding
+assert 'returnToBlackIce' in onboarding and 'MainActivityRuntime.instance?.finish()' in onboarding
 print('PASS: single Black Ice entry point, included-core intent, isolated core process, private VM tracking endpoint, safe task return, BIOS setup return, and update identity.')
