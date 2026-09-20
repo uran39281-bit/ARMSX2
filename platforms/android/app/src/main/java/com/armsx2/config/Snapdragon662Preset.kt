@@ -1,5 +1,13 @@
 package com.armsx2.config
 
+/** Conservative native-resolution graphics profile. Not a promise of full speed. */
+fun Settings.snapdragon662GraphicsPreset(): Settings = snapdragon662Preset().copy(
+    eeCycleRate = 0, eeCycleSkip = 0, fastCDVD = false,
+    accurateBlendingUnit = 1, hwMipmap = true, textureFiltering = 1,
+    displayBilinear = 1, texturePreloading = 2, hardwareDownloadMode = 0,
+    dithering = 1, spu2LightweightMix = false,
+)
+
 /**
  * Black Ice performance preset for Snapdragon 662 / Adreno 610 devices.
  *

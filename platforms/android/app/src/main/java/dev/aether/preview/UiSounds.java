@@ -17,7 +17,7 @@ final class UiSounds {
   prefs=app.getSharedPreferences("black-ice-audio",0);
   pool=new SoundPool.Builder().setMaxStreams(2).setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()).build();
   pool.setOnLoadCompleteListener((p,id,status)->{if(status==0)ready.add(id);});
-  for(String key:new String[]{"click","back","success","move"})try(AssetFileDescriptor f=app.getAssets().openFd("sounds/"+key+".ogg")){ids.put(key,pool.load(f,1));}catch(Exception ignored){}
+  for(String key:new String[]{"click","back","success","move","horizontal","boundary","slider","off","error"})try(AssetFileDescriptor f=app.getAssets().openFd("sounds/"+key+".ogg")){ids.put(key,pool.load(f,1));}catch(Exception ignored){}
  }
  boolean enabled(){return prefs.getBoolean("effects",true);}
  void setEnabled(boolean value){prefs.edit().putBoolean("effects",value).apply();if(!value)pool.autoPause();}

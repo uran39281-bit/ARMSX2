@@ -13,6 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.armsx2.config.Settings
+import com.armsx2.config.snapdragon662Preset
+import com.armsx2.config.snapdragon662GraphicsPreset
 import com.armsx2.i18n.str
 import com.armsx2.ui.InGameOverlay
 import androidx.core.content.edit
@@ -93,6 +95,18 @@ fun PerformanceTab(state: MutableState<Settings>) {
             )
         }
         HelpText(str("perf.speedhackProfile.help"))
+        val sdGraphics = s.snapdragon662GraphicsPreset()
+        val sdPerformance = s.snapdragon662Preset()
+        SegmentedRow(
+            label = "Snapdragon 662 / Adreno 610",
+            options = listOf("Graphics", "Performance"),
+            selectedIndex = when (s) { sdGraphics -> 0; sdPerformance -> 1; else -> -1 },
+            onChange = {
+                apply(if (it == 0) sdGraphics else sdPerformance)
+                com.armsx2.runtime.MainActivityRuntime.surface.value?.applyOutputScale()
+            },
+        )
+        HelpText("Both use native resolution. Graphics preserves blending and readbacks. Performance uses CPU cycle skipping and reduced graphics accuracy; switch to Graphics if a game glitches. Results vary by game.")
         SettingsDivider()
         // ---- Display Resolution (HW scaler), NetherSX2-style ----------------
         // Shrinks the game's OUTPUT surface (hardware-composer upscales to the

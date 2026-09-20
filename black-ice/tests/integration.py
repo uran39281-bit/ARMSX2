@@ -17,7 +17,7 @@ s=(m/'java/com/armsx2/runtime/MainActivityRuntime.kt').read_text()
 assert 'blackIceSession("checkpoint")' in s and 'blackIceForeground = false' in s
 assert 'instance?.finishAndRemoveTask()' not in s
 p=(r/'platforms/android/gradle.properties').read_text()
-assert 'armsx2.versionName=1.0.7' in p and 'armsx2.versionCode=10007' in p
+assert 'armsx2.versionName=1.0.8' in p and 'armsx2.versionCode=10008' in p
 onboarding = (m/'java/com/armsx2/ui/onboarding/OnboardingViewModel.kt').read_text()
 assert 'returnToBlackIce' in onboarding and 'MainActivityRuntime.instance?.finish()' in onboarding
 screen = (m/'java/com/armsx2/ui/onboarding/OnboardingScreen.kt').read_text()

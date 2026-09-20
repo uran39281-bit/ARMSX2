@@ -126,6 +126,9 @@ object WindowImpl {
                     LocalLayoutDirection provides LayoutDirection.Ltr,
                 ) {
                     com.armsx2.ui.touch.TouchControlsOverlay()
+                    if (MainActivityRuntime.eState.value == EmuState.RUNNING && !showLibrary.value && !overlayVisible.value) {
+                        BlackIceHardwareOverlay()
+                    }
                 }
 
             if (showLibrary.value && MainActivityRuntime.eState.value == EmuState.RUNNING && !overlayVisible.value) {

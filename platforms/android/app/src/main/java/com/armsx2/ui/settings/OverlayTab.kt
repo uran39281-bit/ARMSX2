@@ -178,6 +178,11 @@ fun OverlayTab(state: MutableState<Settings>) {
         }
         SettingsDivider()
         ToggleRow(str("overlay.toggle.fps"), s.osdShowFps) { apply(s.copy(osdShowFps = it)) }
+        androidx.compose.runtime.LaunchedEffect(Unit) { com.armsx2.ui.BlackIceHardwareStats.load() }
+        ToggleRow("Black Ice hardware monitor", com.armsx2.ui.BlackIceHardwareStats.enabled.value) {
+            com.armsx2.ui.BlackIceHardwareStats.setEnabled(it)
+        }
+        HelpText("CPU/GPU names, temperatures, usage and clocks; RAM used/total and FPS. Restricted readings show N/A. CPU MHz is the highest readable current core clock. RAM frequency is unavailable. Updates once per second while playing.")
         SettingsDivider()
         ToggleRow(str("overlay.toggle.vps"), s.osdShowVps) { apply(s.copy(osdShowVps = it)) }
         SettingsDivider()

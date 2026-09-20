@@ -66,7 +66,7 @@ assert.equal(vm.runInContext('playlists.length',ctx),0);assert.equal(files.lengt
 let levels=[],sfx=[];ctx.AndroidLibrary.setThemeVolume=v=>levels.push(v);ctx.AndroidLibrary.uiSound=k=>sfx.push(k);
 listeners.input({target:{id:'music-volume',value:'8'}});assert.deepEqual(levels,[8]);
 listeners.click({target:{closest:()=>({dataset:{page:'home'}})}});
-assert.equal(vm.runInContext('page',ctx),'home');assert.deepEqual(sfx,['click']);
+assert.equal(vm.runInContext('page',ctx),'home');assert.deepEqual(sfx,['slider','click']);
 listeners.change({target:{id:'sort',value:'title'}});assert.equal(JSON.parse(storage.get('aether-library-v2')).prefs.sort,'title');
 console.log('PASS: playlist create/duplicate prevention/rename/delete, valid membership, persistence, escaping, empty collection, Home click, sound dispatch, volume and remembered sort.');
 let appended,appInert=false,removedSplash=false;

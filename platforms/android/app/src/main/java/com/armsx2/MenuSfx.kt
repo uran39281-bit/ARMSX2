@@ -48,7 +48,7 @@ object MenuSfx {
         TOGGLE_ON("toggle_on", R.raw.sfx_toggle_on),
         TOGGLE_OFF("toggle_off", R.raw.sfx_toggle_off),
         RESET("reset", R.raw.sfx_reset),
-        SLIDER("slider", R.raw.sfx_nav_a, R.raw.sfx_nav_b), // shares the alternating nav ticks
+        SLIDER("slider", R.raw.black_ice_slider),
         SLEEP("sleep", R.raw.sfx_sleep),         // DS-lid-style chime when the device sleeps
         WAKE("wake", R.raw.sfx_wake),            // chime when waking back to the app
         POPUP_OPEN("popup_open", R.raw.sfx_popup_open),   // a dialog/popup appears (hardcore confirm, info)
