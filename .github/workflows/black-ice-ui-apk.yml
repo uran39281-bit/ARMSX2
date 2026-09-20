@@ -68,6 +68,12 @@ jobs:
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
+          name: Black-Ice-1.0.7-signing-tools
+          path: delivery/tools/
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
           name: Black-Ice-1.0.7-apk-part-0
           path: delivery-chunks/Black-Ice-1.0.7-ci.apk.part-0
           compression-level: 0
