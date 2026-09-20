@@ -1,4 +1,4 @@
-name: Black Ice 1.0.6 UI APK
+name: Black Ice 1.0.7 UI APK
 on:
   push:
     branches: [black-ice-ui-refresh]
@@ -54,13 +54,13 @@ jobs:
         run: |
           python3 platforms/android/tools/stage-black-ice-native.py native-base/Black-Ice-1.0.4-install.apk platforms/android/app/build/outputs/apk/github/debug/app-github-debug.apk --verify
           mkdir -p delivery/tools/lib64
-          cp platforms/android/app/build/outputs/apk/github/debug/app-github-debug.apk delivery/Black-Ice-1.0.6-ci.apk
+          cp platforms/android/app/build/outputs/apk/github/debug/app-github-debug.apk delivery/Black-Ice-1.0.7-ci.apk
           cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" delivery/tools/
           cp "$ANDROID_HOME/build-tools/36.0.0/zipalign" delivery/tools/
           cp "$ANDROID_HOME/build-tools/36.0.0/lib64/libc++.so" delivery/tools/lib64/
       - uses: actions/upload-artifact@v4
         with:
-          name: Black-Ice-1.0.6-signing-input
+          name: Black-Ice-1.0.7-signing-input
           path: delivery/
           compression-level: 0
           if-no-files-found: error
