@@ -2350,7 +2350,14 @@ open class MainActivityRuntime : ComponentActivity() {
         // the user in an empty library with the wizard skipped. If no configured ROMs
         // folder is actually reachable, drop setupComplete for this session so the wizard
         // re-runs (and re-requests the permission); finishSetup re-arms it.
-        if (setupComplete.value && !romsAccessible(this, romsDirs.value)) {
+        // A frontend supplies a single game URI, not a core-library folder. Preserve
+        // completed BIOS setup on that route; the launch handler checks game access.
+        // Keep folder-permission recovery for the core's own library.
+        val directGameWithBios = extractLaunchUri(intent) != null &&
+            bios.value?.let { path ->
+                File(path).let { it.isFile && it.canRead() && it.length() > 0 }
+            } == true
+        if (setupComplete.value && !directGameWithBios && !romsAccessible(this, romsDirs.value)) {
             setupComplete.value = false
             setupRecoveryNeeded.value = true
         }
