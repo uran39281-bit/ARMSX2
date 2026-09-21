@@ -4,8 +4,18 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUTPUT_APK=""
 APPLICATION_ID="${ARMSX2_APPLICATION_ID:-}"
+PERFORMANCE_ARGS=()
 while [[ $# -gt 0 ]]; do
 	case "$1" in
+	--performance-baseline|--performance-candidate)
+		PERFORMANCE_ARGS=(-PblackIce.benchmark=true -Parmsx2.march=armv8-a -Parmsx2.marchExtra=-moutline-atomics)
+		if [[ "$1" == "--performance-candidate" ]]; then
+			PERFORMANCE_ARGS+=(-PblackIce.releaseCore=true)
+		else
+			PERFORMANCE_ARGS+=(-PblackIce.releaseCore=false)
+		fi
+		shift
+		;;
 	--application-id)
 		APPLICATION_ID="$2"
 		shift 2
@@ -79,6 +89,7 @@ build_core() {
 	"$ROOT_DIR/gradlew" -p "$ROOT_DIR" :app:assembleGithubDebug \
 		-Parmsx2.hostPageSize="$page_size" \
 		-Parmsx2.nativeLibName="$lib_name" \
+		"${PERFORMANCE_ARGS[@]}" \
 		"${id_args[@]}"
 
 	if [[ ! -f "$built_apk" ]]; then

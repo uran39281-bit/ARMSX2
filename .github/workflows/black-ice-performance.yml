@@ -1,0 +1,68 @@
+name: Black Ice native performance experiment
+on:
+  push:
+    branches: [black-ice-performance]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: black-ice-performance-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [baseline, candidate]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install toolchain
+        run: sdkmanager "platforms;android-37" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
+      - name: Verify existing behavior and benchmark analysis
+        run: |
+          node black-ice/tests/library-ui.cjs
+          python3 black-ice/tests/integration.py
+          python3 -m unittest discover -s black-ice/tests -p 'test_benchmark.py'
+      - name: Fetch shader compiler dependencies
+        working-directory: platforms/android
+        run: python3 app/src/main/cpp/3rdparty/shaderc/utils/git-sync-deps
+      - name: Install Rust target
+        run: rustup target add aarch64-linux-android
+      - name: Create disposable experiment key
+        run: |
+          mkdir -p "$HOME/.android"
+          keytool -genkeypair -keystore "$HOME/.android/debug.keystore" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 365 -dname "CN=Black Ice Performance Experiment"
+      - name: Apply existing Snapdragon preset
+        working-directory: platforms/android
+        run: python3 tools/apply-black-ice-sd662-tune.py
+      - name: Rebuild both native page-size variants
+        working-directory: platforms/android
+        run: |
+          bash tools/build-universal-page-apk.sh --performance-${{ matrix.mode }} \
+            --application-id dev.aether.blackice.bench.${{ matrix.mode }} \
+            "$GITHUB_WORKSPACE/Black-Ice-performance-${{ matrix.mode }}.apk"
+      - name: Record experiment configuration
+        run: |
+          git rev-parse HEAD > build-${{ matrix.mode }}.txt
+          echo "mode=${{ matrix.mode }}; ISA=armv8-a; atomics=outlined; benchmark=on; pages=4K+16K" >> build-${{ matrix.mode }}.txt
+          sha256sum Black-Ice-performance-${{ matrix.mode }}.apk >> build-${{ matrix.mode }}.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Black-Ice-performance-${{ matrix.mode }}
+          path: |
+            Black-Ice-performance-${{ matrix.mode }}.apk
+            build-${{ matrix.mode }}.txt
+          compression-level: 0
+          if-no-files-found: error
