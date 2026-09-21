@@ -12,6 +12,7 @@ with `-O3`. This experiment rebuilds native code instead of reusing those bytes.
 | Native page sizes | 4K and 16K | Same |
 | Java/Kotlin build | GithubDebug | Same |
 | Compile/target SDK | 36 (available CI toolchain) | Same |
+| AndroidX Core / Lifecycle | 1.17.0 / 2.10.0 | Same |
 | Performance sampling | Every core metrics update (~500ms) | Same |
 
 Both packages are separate from `dev.aether.preview` and have their own data.
@@ -20,7 +21,9 @@ These APKs use disposable test keys and are not production updates.
 Baseline and candidate are identified by their APK filenames and package IDs
 `dev.aether.blackice.bench.baseline` / `dev.aether.blackice.bench.candidate`.
 
-The normal build is unchanged. The experiment has no new speedhacks, no
+The stable branch is unchanged. On this experiment branch, AndroidX Core and
+Lifecycle are pinned to SDK-36-compatible releases because the newer versions
+require SDK 37, unavailable on the runner. The experiment has no new speedhacks, no
 frame generation, and no global fast-math flags. The existing SD662 preset is
 available in both. LTO/debug-check changes need on-device correctness testing.
 
