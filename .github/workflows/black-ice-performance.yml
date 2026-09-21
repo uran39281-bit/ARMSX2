@@ -29,7 +29,7 @@ jobs:
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
       - name: Install toolchain
-        run: sdkmanager "platforms;android-37" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
       - name: Verify existing behavior and benchmark analysis
         run: |
           node black-ice/tests/library-ui.cjs
@@ -47,6 +47,18 @@ jobs:
       - name: Apply existing Snapdragon preset
         working-directory: platforms/android
         run: python3 tools/apply-black-ice-sd662-tune.py
+      - name: Label the experimental launcher
+        env:
+          BENCH_MODE: ${{ matrix.mode }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          path = Path("platforms/android/app/src/main/AndroidManifest.xml")
+          source = path.read_text()
+          assert source.count('android:label="Black Ice"') == 1
+          path.write_text(source.replace('android:label="Black Ice"', 'android:label="Black Ice ' + os.environ["BENCH_MODE"] + '"'))
+          PY
       - name: Rebuild both native page-size variants
         working-directory: platforms/android
         run: |

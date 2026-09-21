@@ -11,6 +11,7 @@ with `-O3`. This experiment rebuilds native code instead of reusing those bytes.
 | Instruction baseline | ARMv8-A with outlined atomics | Same |
 | Native page sizes | 4K and 16K | Same |
 | Java/Kotlin build | GithubDebug | Same |
+| Compile/target SDK | 36 (available CI toolchain) | Same |
 | Performance sampling | Every core metrics update (~500ms) | Same |
 
 Both packages are separate from `dev.aether.preview` and have their own data.

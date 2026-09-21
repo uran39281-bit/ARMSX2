@@ -8,7 +8,7 @@ PERFORMANCE_ARGS=()
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 	--performance-baseline|--performance-candidate)
-		PERFORMANCE_ARGS=(-PblackIce.benchmark=true -Parmsx2.march=armv8-a -Parmsx2.marchExtra=-moutline-atomics)
+		PERFORMANCE_ARGS=(-PblackIce.benchmark=true -Parmsx2.march=armv8-a -Parmsx2.marchExtra=-moutline-atomics -Parmsx2.compileSdk=36 -Parmsx2.targetSdk=36)
 		if [[ "$1" == "--performance-candidate" ]]; then
 			PERFORMANCE_ARGS+=(-PblackIce.releaseCore=true)
 		else
