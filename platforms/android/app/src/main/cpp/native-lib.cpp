@@ -3605,6 +3605,21 @@ void Host::OnVMResumed()
 
 void Host::OnPerformanceMetricsUpdated()
 {
+#ifdef BLACKICE_BENCHMARK
+    // Reuse the core's 500ms metrics update. No per-frame polling, file writes,
+    // GPU queries or system sensor scans. Never log paths, titles or BIOS data.
+    if (VMManager::GetState() != VMState::Running || VMManager::GetDiscCRC() == 0)
+        return;
+    const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now().time_since_epoch()).count();
+    __android_log_print(ANDROID_LOG_INFO, "BlackIceBench",
+        "v1,%lld,%08x,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f",
+        static_cast<long long>(ms), VMManager::GetDiscCRC(),
+        PerformanceMetrics::GetFPS(),
+        PerformanceMetrics::IsInternalFPSValid() ? PerformanceMetrics::GetInternalFPS() : -1.0f,
+        PerformanceMetrics::GetSpeed(), PerformanceMetrics::GetAverageFrameTime(),
+        PerformanceMetrics::GetCPUThreadUsage(), PerformanceMetrics::GetGSThreadUsage());
+#endif
 }
 
 void Host::OnSaveStateLoading(const std::string_view filename)

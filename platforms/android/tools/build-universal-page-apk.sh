@@ -4,8 +4,20 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUTPUT_APK=""
 APPLICATION_ID="${ARMSX2_APPLICATION_ID:-}"
+PERFORMANCE_ARGS=()
+PERFORMANCE_MODE=""
 while [[ $# -gt 0 ]]; do
 	case "$1" in
+	--performance-baseline|--performance-candidate)
+		PERFORMANCE_MODE="${1#--performance-}"
+		PERFORMANCE_ARGS=(-PblackIce.benchmark=true -Parmsx2.march=armv8-a -Parmsx2.marchExtra=-moutline-atomics -Parmsx2.compileSdk=36 -Parmsx2.targetSdk=36)
+		if [[ "$1" == "--performance-candidate" ]]; then
+			PERFORMANCE_ARGS+=(-PblackIce.releaseCore=true)
+		else
+			PERFORMANCE_ARGS+=(-PblackIce.releaseCore=false)
+		fi
+		shift
+		;;
 	--application-id)
 		APPLICATION_ID="$2"
 		shift 2
@@ -79,7 +91,13 @@ build_core() {
 	"$ROOT_DIR/gradlew" -p "$ROOT_DIR" :app:assembleGithubDebug \
 		-Parmsx2.hostPageSize="$page_size" \
 		-Parmsx2.nativeLibName="$lib_name" \
+		"${PERFORMANCE_ARGS[@]}" \
 		"${id_args[@]}"
+
+	if [[ -n "$PERFORMANCE_MODE" ]]; then
+		python3 "$ROOT_DIR/tools/verify-black-ice-performance-build.py" \
+			"$ROOT_DIR/app/.cxx" "$PERFORMANCE_MODE" "$lib_name" "$page_size"
+	fi
 
 	if [[ ! -f "$built_apk" ]]; then
 		echo "error: Gradle did not produce $built_apk" >&2

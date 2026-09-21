@@ -42,6 +42,13 @@ val armsx2RecTestHooks = providers.gradleProperty("armsx2.recTestHooks").orElse(
 val armsx2ApplicationId = providers.gradleProperty("armsx2.applicationId").orElse("com.armsx2")
 // UI-only builds may package the hash-verified native libraries from a matching build.
 val blackIceReuseNative = providers.gradleProperty("blackIce.reuseNative").orElse("false").get().toBoolean()
+// Isolated A/B experiments: keep the Java/Kotlin debug variant identical while
+// changing only the native core's configuration. Normal builds retain Debug.
+val blackIceReleaseCore = providers.gradleProperty("blackIce.releaseCore").orElse("false").get().toBoolean()
+val blackIceBenchmark = providers.gradleProperty("blackIce.benchmark").orElse("false").get().toBoolean()
+if (blackIceReuseNative && (blackIceReleaseCore || blackIceBenchmark)) {
+    throw GradleException("Performance experiments must rebuild native code; disable blackIce.reuseNative.")
+}
 val armsx2SigningPropertiesFile = rootProject.file("armsx2_keystore.properties")
 val armsx2SigningProperties = Properties().apply {
     if (armsx2SigningPropertiesFile.isFile) {
@@ -96,13 +103,13 @@ val armsx2DiscordSdkDir: String? =
 android {
     namespace = "com.armsx2"
     androidResources { noCompress += listOf("mp3", "ogg") }
-    compileSdk = 37
+    compileSdk = providers.gradleProperty("armsx2.compileSdk").orElse("37").get().toInt()
     ndkVersion = armsx2NdkVersion.get()
 
     defaultConfig {
         applicationId = armsx2ApplicationId.get()
         minSdk = armsx2MinSdk.get().toInt()
-        targetSdk = 37
+        targetSdk = providers.gradleProperty("armsx2.targetSdk").orElse("37").get().toInt()
         versionCode = providers.gradleProperty("armsx2.versionCode").orNull?.toInt() ?: 10004
         versionName = providers.gradleProperty("armsx2.versionName").orNull ?: "1.0.4"
 
@@ -210,7 +217,9 @@ android {
                     // the CMake invocation, so a build is reproducible from the Gradle property
                     // alone. Absent = Discord compiles out.
                     armsx2DiscordSdkDir?.let { arguments += "-DDISCORD_SDK_DIR=$it" }
-                    arguments += "-DCMAKE_BUILD_TYPE=Debug"
+                    arguments += if (blackIceReleaseCore) "-DCMAKE_BUILD_TYPE=Release" else "-DCMAKE_BUILD_TYPE=Debug"
+                    arguments += if (blackIceReleaseCore) "-DLTO_PCSX2_CORE=ON" else "-DLTO_PCSX2_CORE=OFF"
+                    arguments += "-DBLACKICE_BENCHMARK=${if (blackIceBenchmark) "ON" else "OFF"}"
                     arguments += "-DARMSX2_EMUCORE_LIBRARY_NAME=${armsx2NativeLibName.get()}"
                     arguments += "-DARMSX2_ANDROID_HOST_PAGE_SIZE=${armsx2HostPageSize.get()}"
                     val march = armsx2March.get().let { if (it.isBlank()) "" else " -march=$it" } +
